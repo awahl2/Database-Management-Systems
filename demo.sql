@@ -1,10 +1,12 @@
 -- In Class Demo using Pets Table
 
--- Notes:
+-- Notes :
 -- 
--- Question: How do we know we have the right final data?
--- Potential solutions: create a fake database and run commands or throw data into excel to test commands
+-- Question : How do we know we have the right final data?
+-- Potential solutions : create a fake database and run commands or throw data into excel to test commands
 -- 
+
+-- SQL Function Notes :
 -- upper() : converts to uppercase
 -- lower() : converts to lowercase
 -- concat(value1, value2, valuen) : concatenate values
