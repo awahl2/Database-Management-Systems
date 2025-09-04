@@ -1,3 +1,5 @@
+-- In Class Demo using Pets Table
+
 -- Notes:
 -- 
 -- Question: How do we know we have the right final data?
