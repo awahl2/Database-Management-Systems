@@ -13,6 +13,7 @@
 -- upper() : converts to uppercase
 -- lower() : converts to lowercase
 -- concat(value1, value2, valuen) : concatenate values
+-- concat_ws(",", value1, valuen) : converts to csv format; "," can be changed to anything as needed
 --
 
 -- 1. How can you see all the tables from the demo database?
