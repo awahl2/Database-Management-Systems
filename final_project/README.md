@@ -23,27 +23,50 @@ erDiagram
     ITEMS ||--o{ CHAMPION_ITEMS : "used_in"
     
     CHAMPIONS {
-        int champion_id PK
+        smallint champion_id PK
         varchar name
         varchar primary_role
         decimal win_rate
         decimal pick_rate
         decimal ban_rate
-        datetime last_updated
     }
     
     ITEMS {
-        int item_id PK
+        smallint item_id PK
         varchar name
-        int cost
+        mediumint cost
         varchar class
     }
     
     CHAMPION_ITEMS {
         int champion_item_id PK
-        int champion_id FK
-        int item_id FK
-        int priority_order
+        smallint champion_id FK
+        smallint item_id FK
+        tinyint priority_order
         decimal win_rate_with_item
     }
 ```
+
+### Database Design
+
+This database design follows third normal form (3NF) to eliminate redundancy and ensure data integrity. The design separates champions, items, and their relationships into distinct tables to avoid issues. The `champions` table stores champion-specific attributes that are independent of items, while the `items` table contains item properties that exist regardless of which champion uses them. The `champion_items`junction table represents the many-to-many relationship between champions and items, as each champion can build multiple items and each item can be built on multiple champions.
+
+A key design choice was storing `win_rate_with_items` in the junction table rather than calculating it. This denormalization improves query performance for the most common use case, retrieving optimal builds, and accurately reflects that win rates are specific to the champion-item combination. The `priority_order` field indicates the recommended purchase sequence, which is crucial for gameplay decisions. Primary and foreign keys enforce referential integrity, ensuring that champion-item relationships only reference valid champions and items.
+
+The database uses appropriate data types for each field: smallint for champion_id and item_id, mediumint for cost, tinyint for priority_order, varchar for text, and decimal for percentages. The indexes on foreign keys optimize join operations, which are frequent in this application.
+
+### Table Descriptions
+
+**champions**:
+Stores information about each playable champion in League of Legends, including their name, primary role (Jungle, ADC, Support, etc.), and performance statistics such as win rate, pick rate, and ban rate across all matches.
+
+**items**:
+Contains all purchasable items in the game with their cost and classification (Starter, Basic, Epic, Legendary). This table design enables filtering and sorting items by price and category.
+
+**champion_items**:
+A junction table that links champions to their optimal items, storing the priority order for building items and the specific win rate achieved when that champion builds that item. This table enables querying the best item builds for any champion.
+
+---
+
+## SQL Code Blocks
+
