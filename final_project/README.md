@@ -69,4 +69,4 @@ A junction table that links champions to their optimal items, storing the priori
 ---
 
 ## SQL Code Blocks
-
+- [Create Tables](https://github.com/awahl2/Database-Management-Systems/blob/main/final_project/create_table.sql#L2)
