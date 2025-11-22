@@ -13,6 +13,7 @@ The data for this database was pulled directly from u.gg, a leading League of Le
 ### User Perspective
 
 FIXME
+
 ---
 
 ## Database ER Model
@@ -21,7 +22,7 @@ FIXME
 erDiagram
     CHAMPIONS ||--o{ CHAMPION_ITEMS : "builds_with"
     ITEMS ||--o{ CHAMPION_ITEMS : "used_in"
-    
+
     CHAMPIONS {
         smallint champion_id PK
         varchar name
@@ -30,14 +31,14 @@ erDiagram
         decimal pick_rate
         decimal ban_rate
     }
-    
+
     ITEMS {
         smallint item_id PK
         varchar name
         mediumint cost
         varchar class
     }
-    
+
     CHAMPION_ITEMS {
         int champion_item_id PK
         smallint champion_id FK
@@ -69,4 +70,6 @@ A junction table that links champions to their optimal items, storing the priori
 ---
 
 ## SQL Code Blocks
+
 - [Create Tables](https://github.com/awahl2/Database-Management-Systems/blob/main/final_project/create_table.sql#L2)
+- [Insert Items](https://github.com/awahl2/Database-Management-Systems/blob/main/final_project/insert_items.sql)
