@@ -73,3 +73,15 @@ A junction table that links champions to their optimal items, storing the priori
 
 - [Create Tables](https://github.com/awahl2/Database-Management-Systems/blob/main/final_project/create_table.sql#L2)
 - [Insert Items](https://github.com/awahl2/Database-Management-Systems/blob/main/final_project/insert_items.sql)
+- [Insert Champions](https://github.com/awahl2/Database-Management-Systems/blob/main/final_project/insert_champions.sql)
+- [Insert Champion + Item Combos](https://github.com/awahl2/Database-Management-Systems/blob/main/final_project/insert_champion_items.sql)
+- [Queries](https://github.com/awahl2/Database-Management-Systems/blob/main/final_project/queries.sql)
+- [Delete Tables](https://github.com/awahl2/Database-Management-Systems/blob/main/final_project/queries.sql)
+
+---
+
+## Reports
+
+FIXME
+
+---
