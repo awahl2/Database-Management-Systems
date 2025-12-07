@@ -1882,7 +1882,7 @@ ORDER BY ci.priority_order;
 
 This query uses a LEFT JOIN to find the single highest win-rate item for every champion in the database, even if some champions don't have item data yet. The LEFT JOIN ensures all champions appear in the results, with NULL values for champions without build data.
 
-```
+```sql
 -- Query 6: Displays Champion, Role, Champion win rate, Best Item, the Cost of the Item, and the Win rate for the item
 SELECT c.name AS champion_name,
        c.primary_role,
@@ -1893,18 +1893,56 @@ SELECT c.name AS champion_name,
 FROM champions c
 LEFT JOIN champion_items ci ON c.champion_id = ci.champion_id
 LEFT JOIN items i ON ci.item_id = i.item_id
-LEFT JOIN (
-    SELECT champion_id, MAX(win_rate_with_item) AS max_win_rate
-    FROM champion_items
-    GROUP BY champion_id
-) AS best ON c.champion_id = best.champion_id 
-         AND ci.win_rate_with_item = best.max_win_rate
+WHERE ci.champion_item_id IN (
+    SELECT MIN(ci2.champion_item_id)
+    FROM champion_items ci2
+    INNER JOIN (
+        SELECT champion_id, MAX(win_rate_with_item) AS max_wr
+        FROM champion_items
+        GROUP BY champion_id
+    ) AS max_rates ON ci2.champion_id = max_rates.champion_id 
+                   AND ci2.win_rate_with_item = max_rates.max_wr
+    GROUP BY ci2.champion_id
+)
+OR ci.champion_item_id IS NULL
 ORDER BY c.name
 LIMIT 25;
 ```
 
 **Sample Output**
-FIXME
+
+```
++---------------+--------------+-------------------+------------------------------+-----------+---------------+
+| champion_name | primary_role | champion_win_rate | best_item                    | item_cost | item_win_rate |
++---------------+--------------+-------------------+------------------------------+-----------+---------------+
+| aatrox        | top          |             49.78 |  serylda ' s grudge          |      3000 |         67.07 |
+| ahri          | middle       |             50.82 |  malignance                  |      2700 |         80.52 |
+| akali         | middle       |             49.62 |  mejai ' s soulstealer       |      1500 |         82.10 |
+| akshan        | middle       |             50.98 |  lord dominik ' s regards    |      3100 |         61.76 |
+| alistar       | support      |             49.34 |  knight ' s vow              |      2300 |         61.49 |
+| ambessa       | top          |             49.34 |  umbral glaive               |      2500 |         67.92 |
+| amumu         | jungle       |             50.75 |  unending despair            |      2800 |         65.61 |
+| anivia        | middle       |             51.04 |  mejai ' s soulstealer       |      1500 |         82.11 |
+| annie         | middle       |             50.84 |  mejai ' s soulstealer       |      1500 |         78.38 |
+| aphelios      | adc          |             49.41 |  lord dominik ' s regards    |      3100 |         64.02 |
+| ashe          | adc          |             51.86 |  mercurial scimitar          |      3200 |         61.43 |
+| aurelion sol  | middle       |             51.46 |  mejai ' s soulstealer       |      1500 |         80.07 |
+| aurora        | middle       |             49.23 |  mejai ' s soulstealer       |      1500 |         79.75 |
+| azir          | middle       |             44.34 |  void staff                  |      3000 |         59.07 |
+| bard          | support      |             50.89 |  bloodsong                   |       400 |         61.11 |
+| bel'veth      | jungle       |             51.92 |  blade of the ruined king    |      3200 |         69.86 |
+| blitzcrank    | support      |             51.49 |  frozen heart                |      2500 |         64.22 |
+| brand         | support      |             49.64 |  bloodletter ' s curse full  |      2900 |         64.04 |
+| braum         | support      |             49.71 |  redemption                  |      2300 |         63.13 |
+| briar         | jungle       |             50.76 |  death ' s dance             |      3300 |         61.90 |
+| caitlyn       | adc          |             49.31 |  mercurial scimitar          |      3200 |         61.61 |
+| camille       | top          |             48.93 |  spear of shojin             |      3100 |         68.67 |
+| cassiopeia    | middle       |             52.24 |  mejai ' s soulstealer       |      1500 |         79.66 |
+| cho'gath      | top          |             51.08 |  unending despair            |      2800 |         62.84 |
+| corki         | adc          |             47.75 |  infinity edge               |      3450 |         54.73 |
++---------------+--------------+-------------------+------------------------------+-----------+---------------+
+25 rows in set (0.01 sec)
+```
 
 ---
 
