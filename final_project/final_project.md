@@ -1834,3 +1834,75 @@ ORDER BY avg_cost DESC;
 
 ---
 
+## Query 5 - Join of three tables (`champions`, `items`, `champion_items`)
+
+Retrieves all items used by the champion 'ahri', along with their cost, priority order, and win rate when used by her. This helps players understand which items synergize best with Ahri.
+
+```
+-- Query 5: Shows Champion_name, Primary Role, Item Name, Item cost, Priority Order, and her Win Rate with Item for Ahri
+SELECT c.name AS champion_name,
+    c.primary_role,
+    i.name AS item_name,
+    i.cost,
+    ci.priority_order,
+    ci.win_rate_with_item
+FROM champions c
+    INNER JOIN champion_items ci ON c.champion_id = ci.champion_id
+    INNER JOIN items i ON ci.item_id = i.item_id
+WHERE c.name = 'ahri'
+ORDER BY ci.priority_order;
+```
+
+**Sample Output**
+
+```
++---------------+--------------+-------------------------+------+----------------+--------------------+
+| champion_name | primary_role | item_name               | cost | priority_order | win_rate_with_item |
++---------------+--------------+-------------------------+------+----------------+--------------------+
+| ahri          | middle       | doran's ring            |  400 |              0 |              50.50 |
+| ahri          | middle       | health potion           |   50 |              0 |              50.50 |
+| ahri          | middle       |  malignance             | 2700 |              1 |              80.52 |
+| ahri          | middle       | sorcerer's shoes        | 1100 |              2 |              80.52 |
+| ahri          | middle       |  mejai ' s soulstealer  | 1500 |              3 |              80.52 |
+| ahri          | middle       |  rabadon ' s deathcap   | 3500 |              4 |              55.30 |
+| ahri          | middle       |  zhonya ' s hourglass   | 3250 |              4 |              53.75 |
+| ahri          | middle       |  rabadon ' s deathcap   | 3500 |              5 |              60.47 |
+| ahri          | middle       |  zhonya ' s hourglass   | 3250 |              5 |              60.21 |
+| ahri          | middle       |  shadowflame            | 3200 |              5 |              59.76 |
+| ahri          | middle       |  rabadon ' s deathcap   | 3500 |              6 |              59.96 |
+| ahri          | middle       |  zhonya ' s hourglass   | 3250 |              6 |              59.90 |
+| ahri          | middle       |  horizon focus          | 2750 |              6 |              71.43 |
++---------------+--------------+-------------------------+------+----------------+--------------------+
+13 rows in set (0.00 sec)
+```
+
+---
+
+## Query 6 - `LEFT JOIN` to display the highest winrate items for each champion
+
+This query uses a LEFT JOIN to find the single highest win-rate item for every champion in the database, even if some champions don't have item data yet. The LEFT JOIN ensures all champions appear in the results, with NULL values for champions without build data.
+
+```
+-- Query 6: Displays Champion, Role, Champion win rate, Best Item, the Cost of the Item, and the Win rate for the item
+SELECT c.name AS champion_name,
+       c.primary_role,
+       c.win_rate AS champion_win_rate,
+       i.name AS best_item,
+       i.cost AS item_cost,
+       ci.win_rate_with_item AS item_win_rate
+FROM champions c
+LEFT JOIN champion_items ci ON c.champion_id = ci.champion_id
+LEFT JOIN items i ON ci.item_id = i.item_id
+LEFT JOIN (
+    SELECT champion_id, MAX(win_rate_with_item) AS max_win_rate
+    FROM champion_items
+    GROUP BY champion_id
+) AS best ON c.champion_id = best.champion_id 
+         AND ci.win_rate_with_item = best.max_win_rate
+ORDER BY c.name
+LIMIT 25;
+```
+
+**Sample Output**
+FIXME
+
