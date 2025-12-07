@@ -1647,7 +1647,7 @@ Required queries using `items`, `champions`, and `champion_items` tables.
 Gets all champions sorted by win rate (descending) and by ban rate (ascending). This identifies the strongest champions that are not heavily banned. This is most useful for players who want to pick strong champions that will likely not be banned.
 
 ```
--- Query 1: Lists champions ordered by win rate (desc), then by ban rate (asc).
+-- Query 1: Lists champions and primary role ordered by win rate (desc), then by ban rate (asc).
 SELECT name,
     primary_role,
     win_rate,
@@ -1689,4 +1689,148 @@ LIMIT 20;
 
 ---
 
+## Query 2 - `SELECT` with a calculated field
+
+Calculates the total cost of a full item build for the champion 'bard'. Also calculates the required gold per minute (GPM) to afford this build by 27 and 30 minutes. This helps players understand the economic requirements for building items on Bard.
+
+```
+-- Query 2: Shows the champion, primary role, total build cost, required gpm for a 27-minute game, and required gpm for 30 30-minute game
+SELECT c.name AS champion_name,
+    c.primary_role,
+    (
+        core_items.core_cost + situational_items.situational_cost
+    ) AS total_build_cost,
+    ROUND(
+        (
+            core_items.core_cost + situational_items.situational_cost
+        ) / 27.5,
+        2
+    ) AS required_gpm_27min,
+    ROUND(
+        (
+            core_items.core_cost + situational_items.situational_cost
+        ) / 30,
+        2
+    ) AS required_gpm_30min
+FROM champions c
+    INNER JOIN (
+        SELECT ci.champion_id,
+            SUM(i.cost) AS core_cost
+        FROM champion_items ci
+            INNER JOIN items i ON ci.item_id = i.item_id
+        WHERE ci.priority_order BETWEEN 0 AND 3
+        GROUP BY ci.champion_id
+    ) AS core_items ON c.champion_id = core_items.champion_id
+    INNER JOIN (
+        SELECT ci.champion_id,
+            SUM(i.cost) AS situational_cost
+        FROM champion_items ci
+            INNER JOIN items i ON ci.item_id = i.item_id
+            INNER JOIN (
+                SELECT champion_id,
+                    priority_order,
+                    MAX(win_rate_with_item) AS max_wr
+                FROM champion_items
+                WHERE priority_order BETWEEN 4 AND 6
+                GROUP BY champion_id,
+                    priority_order
+            ) AS best_items ON ci.champion_id = best_items.champion_id
+            AND ci.priority_order = best_items.priority_order
+            AND ci.win_rate_with_item = best_items.max_wr
+        GROUP BY ci.champion_id
+    ) AS situational_items ON c.champion_id = situational_items.champion_id
+WHERE c.name = 'bard';
+```
+
+**Sample Output**
+
+```
++---------------+--------------+------------------+--------------------+--------------------+
+| champion_name | primary_role | total_build_cost | required_gpm_27min | required_gpm_30min |
++---------------+--------------+------------------+--------------------+--------------------+
+| bard          | support      |            12450 |             452.73 |             415.00 |
++---------------+--------------+------------------+--------------------+--------------------+
+1 row in set (0.01 sec)
+```
+
+---
+
+## Query 3 - `SELECT` using a MariaDB function
+
+Lists the top 15 jungle champions by win rate, along with an abbreviation of their role using the MID function.
+
+```
+-- Query 3: Shows champion name, primary role, role abbreviation, and win rate. It is ordered desc by win rate with a limit of 15.
+SELECT name,
+    primary_role,
+    MID(primary_role, 1, 3) AS role_abbr,
+    win_rate
+FROM champions
+WHERE primary_role = 'jungle'
+ORDER BY win_rate DESC
+LIMIT 15;
+```
+
+**Sample Output**
+
+```
++------------------+--------------+-----------+----------+
+| name             | primary_role | role_abbr | win_rate |
++------------------+--------------+-----------+----------+
+| ivern            | jungle       | jun       |    52.23 |
+| bel'veth         | jungle       | jun       |    51.92 |
+| rammus           | jungle       | jun       |    51.82 |
+| rek'sai          | jungle       | jun       |    51.77 |
+| nidalee          | jungle       | jun       |    51.60 |
+| warwick          | jungle       | jun       |    51.37 |
+| zac              | jungle       | jun       |    51.27 |
+| kindred          | jungle       | jun       |    51.26 |
+| kha'zix          | jungle       | jun       |    51.12 |
+| ekko             | jungle       | jun       |    51.01 |
+| diana            | jungle       | jun       |    50.98 |
+| nunu and willump | jungle       | jun       |    50.97 |
+| talon            | jungle       | jun       |    50.96 |
+| master yi        | jungle       | jun       |    50.94 |
+| fiddlesticks     | jungle       | jun       |    50.80 |
++------------------+--------------+-----------+----------+
+15 rows in set (0.00 sec)
+```
+
+---
+
+## Query 4 - Aggregation with `GROUP BY` and `HAVING`
+
+Group items by class and calculate the average, minimum, and maximum cost for each class. Useful for newer players to understand the cost distribution of different item classes.
+
+```
+-- Query 4: Shows class, count of items in the class, the average cost of the items, as well as the minimum and maximum cost of the items within the class.
+SELECT class,
+    COUNT(*) AS item_count,
+    ROUND(AVG(cost), 2) AS avg_cost,
+    MIN(cost) AS min_cost,
+    MAX(cost) AS max_cost
+FROM items
+GROUP BY class
+HAVING item_count >= 3
+ORDER BY avg_cost DESC;
+```
+
+**Sample Output**
+
+```
++-------------+------------+----------+----------+----------+
+| class       | item_count | avg_cost | min_cost | max_cost |
++-------------+------------+----------+----------+----------+
+|  legendary  |        120 |  2675.90 |      400 |     3500 |
+| boots       |         13 |  1207.69 |      300 |     1750 |
+|  epic       |         47 |  1034.30 |      600 |     1600 |
+|  basic      |         16 |   520.31 |      200 |     1300 |
+| starter     |         85 |   384.71 |        0 |     3000 |
+| consumable  |          9 |   258.33 |        0 |      500 |
+| distributed |         16 |    87.50 |        0 |     1000 |
++-------------+------------+----------+----------+----------+
+7 rows in set (0.01 sec)
+```
+
+---
 
