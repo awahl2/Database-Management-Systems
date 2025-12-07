@@ -1906,3 +1906,135 @@ LIMIT 25;
 **Sample Output**
 FIXME
 
+---
+
+## Query 7 - `UPDATE` query to update a champion
+
+Updates the win rate and pick rate for the champion 'jinx'. This reflects recent performance changes in the game meta.
+
+```
+-- Query 7: Updates Jinx's win rate and pick rate
+UPDATE champions
+SET win_rate = 53.45,
+    pick_rate = 13.21
+WHERE name = 'jinx';
+```
+
+**Sample Output**
+
+```
+Query OK, 1 row affected (0.00 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+```
+
+---
+
+## Query 8 - `DELETE` query to delete an item
+
+Deletes all items from the items table that have a cost less than 200.
+
+```
+FIXME
+```
+
+**Sample Output**
+FIXME
+
+---
+
+## Query 9 - Create a `VIEW` and use it
+
+Creates a view that shows champions with high win rates when using specific items. This view includes the champion name, primary role, item name, item cost, priority order, and win rate with the item. The view filters for builds with a win rate greater than 53.00%.
+
+```
+CREATE VIEW high_winrate_builds AS
+SELECT c.name AS champion_name,
+    c.primary_role,
+    i.name AS item_name,
+    i.cost,
+    ci.priority_order,
+    ci.win_rate_with_item
+FROM champions c
+    INNER JOIN champion_items ci ON c.champion_id = ci.champion_id
+    INNER JOIN items i ON ci.item_id = i.item_id
+WHERE ci.win_rate_with_item > 53.00;
+-- Query the view
+SELECT *
+FROM high_winrate_builds
+ORDER BY win_rate_with_item DESC
+LIMIT 10;
+```
+
+**Sample Output**
+
+```
+-- after creating the view
+Query OK, 0 rows affected (0.01 sec)
+
+-- after querying the view
++---------------+--------------+-------------------------+------+----------------+--------------------+
+| champion_name | primary_role | item_name               | cost | priority_order | win_rate_with_item |
++---------------+--------------+-------------------------+------+----------------+--------------------+
+| leona         | support      |  heartsteel             | 3000 |              6 |             100.00 |
+| kled          | top          |  the collector          | 3000 |              6 |             100.00 |
+| kennen        | top          |  cryptbloom             | 3000 |              6 |             100.00 |
+| janna         | support      |  imperial mandate       | 2250 |              6 |             100.00 |
+| janna         | support      |  mejai ' s soulstealer  | 1500 |              4 |              90.74 |
+| heimerdinger  | top          |  mejai ' s soulstealer  | 1500 |              6 |              89.47 |
+| jarvan iv     | jungle       |  thornmail              | 2450 |              6 |              88.89 |
+| lissandra     | middle       |  mejai ' s soulstealer  | 1500 |              6 |              88.24 |
+| galio         | middle       |  mejai ' s soulstealer  | 1500 |              4 |              88.08 |
+| diana         | jungle       |  mejai ' s soulstealer  | 1500 |              5 |              87.94 |
++---------------+--------------+-------------------------+------+----------------+--------------------+
+10 rows in set (0.00 sec)
+```
+
+---
+
+## Query 10 - Transaction with `ROLLBACK`
+
+Transaction that reduces the cost of all 'Legendary' class items by 10% if their cost is below 2500. After the update, it selects a few items to verify the changes. If satisfied, the transaction is committed; otherwise, it can be rolled back.
+
+```
+FIXME
+```
+
+**Sample Output**
+
+```
+FIXME
+```
+
+---
+
+## Reports
+
+FIXME
+
+---
+
+### Delete Tables
+
+Drop all tables (and views) from the database.
+
+```
+-- ==========================================
+--  DROP ALL TABLES
+-- ==========================================
+
+-- Drop the view first (if it exists)
+DROP VIEW IF EXISTS high_winrate_builds;
+
+-- Drop child table first
+DROP TABLE IF EXISTS champion_items;
+
+-- Then drop parent tables
+DROP TABLE IF EXISTS champions;
+DROP TABLE IF EXISTS items;
+```
+
+---
+
+### Poster
+
+---
