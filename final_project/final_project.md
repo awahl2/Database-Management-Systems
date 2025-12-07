@@ -2135,6 +2135,7 @@ This graph compares the average cost of items across different item classes in t
 ---
 
 <img width="1423" height="290" alt="image" src="https://github.com/user-attachments/assets/ef2f546c-3962-446d-9205-e459ce2187a6" />
+
 Link: https://github.com/awahl2/Database-Management-Systems/blob/main/final_project/top10champions.png
 
 ---
