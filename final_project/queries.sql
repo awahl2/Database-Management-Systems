@@ -161,7 +161,7 @@ ORDER BY win_rate_with_item DESC
 LIMIT 10;
 -- Query #10:
 /*
- -- Transaction that reduces the cost of all 'Legendary' class items by 10% if their cost is below 2500.
+ -- Transaction that reduces the cost of all 'Legendary' class items by 10% if their cost is below 3000.
  -- After the update, it selects a few items to verify the changes. If satisfied, the transaction is committed; otherwise, it can be rolled back.
  */
 START TRANSACTION;
@@ -169,14 +169,14 @@ START TRANSACTION;
 UPDATE items
 SET cost = cost * 0.9
 WHERE class = 'Legendary'
-    AND cost < 2500;
+    AND cost < 3000;
 -- Check if updates look correct
 SELECT name,
     cost,
     class
 FROM items
 WHERE class = 'Legendary'
-    AND cost < 2500
+    AND cost < 3000
 LIMIT 5;
 -- If satisfied with changes, COMMIT; otherwise ROLLBACK
 COMMIT;
