@@ -2169,5 +2169,7 @@ DROP TABLE IF EXISTS items;
 ### Poster
 <img width="914" height="666" alt="{C71EBCFF-D155-47D5-BF47-3FE0F5B48C52}" src="https://github.com/user-attachments/assets/bd746f14-b501-4c33-a33b-d28f9ba4b9d0" />
 
+
+
 Link: https://github.com/awahl2/Database-Management-Systems/blob/main/final_project/database%20project%20poster.pptx
 ---
