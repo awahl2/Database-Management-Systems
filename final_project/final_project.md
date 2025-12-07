@@ -2123,7 +2123,23 @@ Query OK, 0 rows affected (0.00 sec)
 
 ## Reports
 
-FIXME
+---
+
+<img width="1419" height="714" alt="image" src="https://github.com/user-attachments/assets/4d920349-0163-40ce-8cfc-d95bad9a6a0e" />
+Link: https://github.com/awahl2/Database-Management-Systems/blob/main/final_project/itemclassesandcosts.png
+
+---
+
+This graph compares the average cost of items across different item classes in the game. Legendary items stand out as the most expensive by a large margin, while consumables and distributed items remain the cheapest. The chart highlights how item tier and functionality strongly influence cost, which helps newer players understand spending patterns when planning builds.
+
+---
+
+<img width="1423" height="290" alt="image" src="https://github.com/user-attachments/assets/ef2f546c-3962-446d-9205-e459ce2187a6" />
+Link: https://github.com/awahl2/Database-Management-Systems/blob/main/final_project/top10champions.png
+
+---
+
+This table lists the ten champions with the highest win rates, along with their pick and ban rates. Even though some champions have relatively low pick or ban rates, they still achieve strong win percentages, suggesting they are powerful but potentially underplayed. The data helps identify strong meta picks and highlights champions that perform well even when not being highly contested.
 
 ---
 
