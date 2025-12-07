@@ -2055,16 +2055,68 @@ Query OK, 0 rows affected (0.01 sec)
 
 ## Query 10 - Transaction with `ROLLBACK`
 
-Transaction that reduces the cost of all 'Legendary' class items by 10% if their cost is below 2500. After the update, it selects a few items to verify the changes. If satisfied, the transaction is committed; otherwise, it can be rolled back.
+This command starts a transaction, temporarily updates all champions with the top-lane role to support, and lets the user preview the changes. It then rolls back the transaction so none of the updates are saved, confirming that the original data is restored. We need to humble top laners somehow.
 
 ```
-FIXME
+START TRANSACTION;
+
+-- Change all top laners to support (as a joke)
+UPDATE champions
+SET primary_role = 'support'
+WHERE primary_role = 'top';
+
+-- Check if updates look correct
+SELECT name, primary_role, win_rate FROM champions 
+WHERE primary_role = 'support'
+LIMIT 10;
+
+-- ROLLBACK because we don't actually want to keep this change
+ROLLBACK;
+
+-- Verify the rollback worked - top laners should be back
+SELECT name, primary_role FROM champions
+WHERE primary_role = 'top'
+LIMIT 5;
 ```
 
 **Sample Output**
 
 ```
-FIXME
+-- First command
+Query OK, 37 rows affected (0.00 sec)
+Rows matched: 37  Changed: 37  Warnings: 0
+
+-- Second Command
++------------+--------------+----------+
+| name       | primary_role | win_rate |
++------------+--------------+----------+
+| aatrox     | support      |    49.78 |
+| alistar    | support      |    49.34 |
+| ambessa    | support      |    49.34 |
+| bard       | support      |    50.89 |
+| blitzcrank | support      |    51.49 |
+| brand      | support      |    49.64 |
+| braum      | support      |    49.71 |
+| camille    | support      |    48.93 |
+| cho'gath   | support      |    51.08 |
+| darius     | support      |    50.18 |
++------------+--------------+----------+
+10 rows in set (0.00 sec)
+
+-- Third Command
+Query OK, 0 rows affected (0.00 sec)
+
+-- Fourth Command
++----------+--------------+
+| name     | primary_role |
++----------+--------------+
+| aatrox   | top          |
+| ambessa  | top          |
+| camille  | top          |
+| cho'gath | top          |
+| darius   | top          |
++----------+--------------+
+5 rows in set (0.00 sec)
 ```
 
 ---
