@@ -1972,11 +1972,35 @@ Rows matched: 1  Changed: 1  Warnings: 0
 Deletes all items from the items table that have a cost less than 200.
 
 ```
-FIXME
+-- First delete any champion_items that reference cheap items
+DELETE FROM champion_items
+WHERE item_id IN (SELECT item_id FROM items WHERE cost < 200);
+
+-- Then delete the cheap items themselves
+DELETE FROM items
+WHERE cost < 200;
+
+-- Verify deletion
+SELECT COUNT(*) AS remaining_items FROM items;
 ```
 
 **Sample Output**
-FIXME
+
+```
+-- Output of first command
+Query OK, 62 rows affected (0.02 sec)
+
+-- Output of second command
+Query OK, 75 rows affected (0.00 sec)
+
+-- Output of third command
++-----------------+
+| remaining_items |
++-----------------+
+|             233 |
++-----------------+
+1 row in set (0.00 sec)
+```
 
 ---
 
